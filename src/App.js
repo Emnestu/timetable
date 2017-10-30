@@ -12,7 +12,7 @@ class App extends Component {
     super(props)
 
     this.state = {
-      data: [[]]
+      data: []
     };
   }
   createCORSRequest(method, url) {
@@ -41,7 +41,7 @@ class App extends Component {
 
   makeCORSRequest() {
     // var url = 'https://www.dublinbus.ie/Your-Journey1/Timetables/All-Timetables/66/';
-    var url = 'https://cors-anywhere.herokuapp.com/https://www.dublinbus.ie/Your-Journey1/Timetables/All-Timetables/66/';
+    var url = 'https://cors-anywhere.herokuapp.com/https://www.dublinbus.ie/Your-Journey1/Timetables/All-Timetables/67/';
     var xhr = this.createCORSRequest('GET', url);
     if (!xhr) {
       throw new Error('CORS not supported');
@@ -57,50 +57,62 @@ class App extends Component {
       var weekdayTimes = [], saturdayTimes = [], sundayTimes = [];
 
       for (var i = 0; i < timesElement.length; i++) {
-        allTimes[i] = timesElement[i].innerText
+        allTimes[i] = timesElement[i].innerText.trim();
       }
-
       var counter = 0;
+      var currentCounter = 0;
 
       for (var i = counter; i < allTimes.length - 1; i++) {
         if (parseInt(allTimes[i + 1]) >= parseInt(allTimes[i])) {
-          weekdayTimes[i] = allTimes[i];
+          weekdayTimes[i - currentCounter] = allTimes[i];
         } else {
+          weekdayTimes[i - currentCounter] = allTimes[i];
           counter = i + 1;
           break;
         }
       }
 
+      currentCounter = counter;
+      console.log(currentCounter);
+
       for (var i = counter; i < allTimes.length - 1; i++) {
         if (parseInt(allTimes[i + 1]) >= parseInt(allTimes[i])) {
-          saturdayTimes[i] = allTimes[i];
+          saturdayTimes[i - currentCounter] = allTimes[i];
         } else {
+          saturdayTimes[i - currentCounter] = allTimes[i];
           counter = i + 1;
           break;
         }
       }
 
+      currentCounter = counter;
+      console.log(currentCounter);
+
       for (var i = counter; i < allTimes.length - 1; i++) {
         if (parseInt(allTimes[i + 1]) >= parseInt(allTimes[i])) {
-          sundayTimes[i] = allTimes[i];
+          sundayTimes[i - currentCounter] = allTimes[i];
         } else {
+          sundayTimes[i - currentCounter] = allTimes[i];
           counter = i + 1;
           break;
         }
       }
 
-      const data = [[weekdayTimes],[saturdayTimes],[sundayTimes]];
-      // var data = {};
-      // data['weekdayTimes'] = weekdayTimes;
-      // data['saturdayTimes'] = saturdayTimes;
-      // data['sundayTimes'] = sundayTimes;
+      var data = [];
+      
+      var longestArrayLength = Math.max(weekdayTimes.length, saturdayTimes.length, sundayTimes.length);
+      for (var i = 0; i < longestArrayLength; i++) {
+        data.push({
+          "weekdayTime": weekdayTimes[i],
+          "saturdayTime": saturdayTimes[i],
+          "sundayTime": sundayTimes[i]
+        });
+      }
 
       this.setState({ data });
 
-      console.dir(weekdayTimes);
-      console.dir(saturdayTimes);
-      console.dir(sundayTimes);
-      
+      console.dir(data);
+
       // process the response.
     }.bind(this);
     xhr.onerror = function () {
@@ -114,15 +126,17 @@ class App extends Component {
     const columns = [{
       id: 'weekdays',
       Header: 'Weekdays',
-      accessor: '0' // Custom value accessors!
+      accessor: 'weekdayTime' // Custom value accessors!
     },
     {
+      id: 'saturdays',
       Header: 'Saturdays',
-      accessor: '0' // String-based value accessors!
+      accessor: 'saturdayTime' // String-based value accessors!
     },
     {
+      id: 'sundays',
       Header: 'Sundays',
-      accessor: '0' // String-based value accessors!
+      accessor: 'sundayTime' // String-based value accessors!
     }]
     return (
       <div>
