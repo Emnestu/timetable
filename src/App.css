@@ -1,3 +1,7 @@
+/*
+  Default classes
+*/
+
 .App {
   text-align: center;
 }
@@ -26,3 +30,36 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/*
+  My custom classes
+*/
+
+.center {
+  text-align: center;
+  margin: auto;
+  width: 50%;
+  border: 2px solid #274374;
+  background-color: #fbe72a;
+  padding: 10px;
+}
+
+#timetable-container {
+  display: flex;
+}
+
+.timetable {
+  width: 50%;
+  background-color: azure;
+}
+
+html { 
+  background: url(images/fermi70.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+
+
